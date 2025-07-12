@@ -14,6 +14,7 @@ namespace SkinetAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddControllers();
             builder.Services.AddDbContext<StoreContext>(opt =>
