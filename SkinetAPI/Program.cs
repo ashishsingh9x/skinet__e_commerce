@@ -1,5 +1,7 @@
 
+using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -7,12 +9,12 @@ namespace SkinetAPI
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddControllers();
             builder.Services.AddDbContext<StoreContext>(opt =>
             {
@@ -38,6 +40,21 @@ namespace SkinetAPI
 
             app.MapControllers();
 
+            // seeding
+            try
+            {
+                var scope = app.Services.CreateScope();
+                var services = scope.ServiceProvider;
+                var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                var context = services.GetRequiredService<StoreContext>();
+                await context.Database.MigrateAsync();
+                await StoreContextSeed.SeedAsync(context, loggerFactory);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
             app.Run();
         }
     }
