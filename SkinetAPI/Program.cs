@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using SkinetAPI.Helpers;
 
 namespace SkinetAPI
 {
@@ -16,6 +17,7 @@ namespace SkinetAPI
             // Add services to the container.
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddAutoMapper(typeof(MappingProfiles));
             builder.Services.AddControllers();
             builder.Services.AddDbContext<StoreContext>(opt =>
             {
