@@ -5,6 +5,7 @@ using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SkinetAPI.Helpers;
+using SkinetAPI.Middlerware;
 
 namespace SkinetAPI
 {
@@ -35,6 +36,10 @@ namespace SkinetAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseMiddleware<ExceptionMiddlerware>();
+
+            app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
             app.UseHttpsRedirection();
             app.UseRouting();
