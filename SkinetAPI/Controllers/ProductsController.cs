@@ -35,16 +35,7 @@ namespace SkinetAPI.Controllers
         {
             var specs = new ProductsWithTypesAndBrandsSpecification();
             var products = await _productRepository.ListAsync(specs);
-            return products.Select(product => new ProductToReturnDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                PictureUrl = product.PictureUrl,
-                ProductType = product.ProductType?.Name,
-                ProductBrand = product.ProductBrand?.Name
-            }).ToList();
+            return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
         }
 
         [HttpGet("{id:int}")]
