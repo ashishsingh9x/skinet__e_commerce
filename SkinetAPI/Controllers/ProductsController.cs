@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkinetAPI.Dtos;
+using SkinetAPI.Errors;
 
 namespace SkinetAPI.Controllers
 {
@@ -37,10 +38,13 @@ namespace SkinetAPI.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductToReturnDto>> GetProductById(int id)
         {
             var specs = new ProductsWithTypesAndBrandsSpecification(id);
             var product = await _productRepository.GetEntityWithSpecification(specs);
+            if (product == null) return NotFound(new ApiResponse(404));
             return _mapper.Map<Product, ProductToReturnDto>(product);
         }
 
