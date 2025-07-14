@@ -1,12 +1,6 @@
-
-using Core.Interfaces;
 using Infrastructure.Data;
-using Infrastructure.Repository;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.OpenApi.Models;
-using SkinetAPI.Errors;
+using SkinetAPI.Extentions;
 using SkinetAPI.Helpers;
 using SkinetAPI.Middlerware;
 
@@ -19,47 +13,24 @@ namespace SkinetAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
             builder.Services.AddControllers();
             builder.Services.AddDbContext<StoreContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.InvalidModelStateResponseFactory = actionContext =>
-                {
-                    var errors = actionContext.ModelState
-                        .Where(e => e.Value.Errors.Count > 0)
-                        .SelectMany(x => x.Value.Errors)
-                        .Select(x => x.ErrorMessage).ToArray();
-
-                    var errorResponse = new ApiErrorValidationResponse
-                    {
-                        Errors = errors
-                    };
-                    return new BadRequestObjectResult(errorResponse);
-                };
-            });
-
+            
+            builder.Services.AddApplicationServices();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SkiNet API", Version = "v1" });
-            });
+            builder.Services.AddSwaggerServices();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI(c => { 
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SkiNet API v1");}
-                );
+                app.UseSwaggerDocumentation();
             }
 
             app.UseMiddleware<ExceptionMiddlerware>();
