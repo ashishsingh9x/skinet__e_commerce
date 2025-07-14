@@ -33,7 +33,7 @@ namespace SkinetAPI
                 app.UseSwaggerDocumentation();
             }
 
-            app.UseMiddleware<ExceptionMiddlerware>();
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseStatusCodePagesWithReExecute("/errors/{0}");
 

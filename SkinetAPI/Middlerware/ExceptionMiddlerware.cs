@@ -4,13 +4,13 @@ using System.Text.Json;
 
 namespace SkinetAPI.Middlerware
 {
-    public class ExceptionMiddlerware
+    public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddlerware> _logger;
+        private readonly ILogger<ExceptionMiddleware> _logger;
         private readonly IHostEnvironment _environment;
 
-        public ExceptionMiddlerware(RequestDelegate next, ILogger<ExceptionMiddlerware> logger, IHostEnvironment environment)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment environment)
         {
             _next = next;
             _logger = logger;

@@ -2,11 +2,7 @@
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
-using Infrastructure.Data;
-using Infrastructure.Repository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SkinetAPI.Dtos;
 using SkinetAPI.Errors;
 
@@ -30,9 +26,9 @@ namespace SkinetAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<List<ProductToReturnDto>>> GetProducts(string? sort)
         {
-            var specs = new ProductsWithTypesAndBrandsSpecification();
+            var specs = new ProductsWithTypesAndBrandsSpecification(sort);
             var products = await _productRepository.ListAsync(specs);
             return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
         }
